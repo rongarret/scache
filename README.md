@@ -17,6 +17,6 @@ enabled.
 
 2.  It will not reveal the secret if STDOUT is a TTY.  This is easily
 subverted by piping the output to CAT, but provides a measure of protection
-againt displaying the secret on the terminal by accident.
+against displaying the secret on the terminal by accident.
 
 3.  The cache will time out after a user-settable period of time.
