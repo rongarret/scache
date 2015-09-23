@@ -56,10 +56,10 @@ int getpppid() {
 int update_keyfile(char* pw) {
   umask(077);
   FILE* f = fopen(keyfile, "w");
+  fprintf(f, "%d\n", now() + timeout);
   fprintf(f, "%d\n", getpppid());
   fprintf(f, "%s\n", ttyname(0));
   fprintf(f, "%d\n", getuid());
-  fprintf(f, "%d\n", now() + timeout);
   fprintf(f, "%s\n", pw);
   fclose(f);
   return 0;
@@ -104,6 +104,15 @@ int main(int argc, char* argv[]) {
   char* line = 0;
   size_t linecap;
 
+  // Check the timeout
+  if ((cnt = getline(&line, &linecap, f)) <= 0) bail("Error reading keyfile");
+  if (now() > atoi(line)) {
+    fclose(f);
+    delete_keyfile();
+    fprintf(stderr, "Cached pass phrase has expired.\n");
+    goto loop;
+  }
+
   // Check the PPPID
   if ((cnt = getline(&line, &linecap, f)) <= 0) bail("Error reading keyfile");
   if (getpppid() != atoi(line)) bail("PPPID mismatch");
@@ -117,15 +126,6 @@ int main(int argc, char* argv[]) {
   // Check the UID
   if ((cnt = getline(&line, &linecap, f)) <= 0) bail("Error reading keyfile");
   if (getuid() != atoi(line)) bail("UID mismatch");
-
-  // Check the timeout
-  if ((cnt = getline(&line, &linecap, f)) <= 0) bail("Error reading keyfile");
-  if (now() > atoi(line)) {
-    fclose(f);
-    delete_keyfile();
-    fprintf(stderr, "Cached pass phrase has expired.\n");
-    goto loop;
-  }
 
   // Everthing checks out, get the secret
   if ((cnt = getline(&line, &linecap, f)) <= 0) bail("Error reading keyfile");
