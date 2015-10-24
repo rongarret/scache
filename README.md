@@ -1,12 +1,12 @@
-# SCHACH (Secure Cache)
+# S-Cache (Secure Cache)
 
-SCACHE is a program that securely caches a pass phrase or other secret data.
+S-Cache is a program that securely caches a pass phrase or other secret data.
 
-SCACHE is an SUID-root executable that works by storing the secret in
+S-Cache is an SUID-root executable that works by storing the secret in
 a file that is owned by root and only readable by root.  Its security is
 thus comparable to the security of shadow passwords.
 
-In addition, SCACHE takes a number of precautions to prevent its being
+In addition, S-Cache takes a number of precautions to prevent its being
 hijacked by malware running as the user:
 
 1.  It stores the name of the controlling TTY and the grandparent process
